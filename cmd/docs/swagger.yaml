@@ -1,0 +1,192 @@
+basePath: /api
+definitions:
+  domain.Task:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      status:
+        type: string
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  domain.TaskInput:
+    properties:
+      description:
+        type: string
+      status:
+        enum:
+        - new
+        - in_progress
+        - done
+        type: string
+      title:
+        type: string
+    required:
+    - status
+    - title
+    type: object
+  shared.ErrorResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shared.IDResponse:
+    properties:
+      id:
+        type: integer
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: These are docs for test assignment from Skills Rock.
+  title: Tasks
+  version: "1.0"
+paths:
+  /task:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all tasks
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of tasks
+          schema:
+            items:
+              $ref: '#/definitions/domain.Task'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/shared.ErrorResponse'
+      summary: Get all tasks
+      tags:
+      - Task
+    post:
+      consumes:
+      - application/json
+      description: Create a new task, body required
+      parameters:
+      - description: Task object
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/domain.TaskInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Task created successfully
+          schema:
+            $ref: '#/definitions/domain.Task'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/shared.ErrorResponse'
+        "422":
+          description: Unprocessable entity
+          schema:
+            $ref: '#/definitions/shared.ErrorResponse'
+      summary: Create a new task
+      tags:
+      - Task
+  /task/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a task by ID
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Task deleted successfully
+          schema:
+            $ref: '#/definitions/shared.IDResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/shared.ErrorResponse'
+        "422":
+          description: Unprocessable entity
+          schema:
+            $ref: '#/definitions/shared.ErrorResponse'
+      summary: Delete a task
+      tags:
+      - Task
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a specific task using its ID
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Task details
+          schema:
+            $ref: '#/definitions/domain.Task'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/shared.ErrorResponse'
+        "422":
+          description: Unprocessable entity
+          schema:
+            $ref: '#/definitions/shared.ErrorResponse'
+      summary: Get a task by ID
+      tags:
+      - Task
+    put:
+      consumes:
+      - application/json
+      description: Update an existing task by ID
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Updated task data
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/domain.TaskInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Task updated successfully
+          schema:
+            $ref: '#/definitions/domain.Task'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/shared.ErrorResponse'
+        "422":
+          description: Unprocessable entity
+          schema:
+            $ref: '#/definitions/shared.ErrorResponse'
+      summary: Update a task
+      tags:
+      - Task
+swagger: "2.0"
