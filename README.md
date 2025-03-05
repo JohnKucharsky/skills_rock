@@ -64,4 +64,4 @@ go install github.com/swaggo/swag/cmd/swag@latest
 - **make dev-db**: Starts database for dev
 - **make migrate**: Migrations, goose
 - **make start**: Starts the app
-- **make dev**: Starts the app in dev mode, fresh
+- **make dev**: Starts the app in dev mode, users air
