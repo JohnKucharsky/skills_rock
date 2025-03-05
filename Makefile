@@ -1,8 +1,10 @@
 dev:
-	cd ./cmd; air
+	cd cmd && air
+start:
+	cd cmd && go run .
 dev-db:
-	docker compose up --build
+	docker compose up -d
 migrate:
-	cd ./migrations; goose postgres postgres://postgres:pass@localhost:5432/data up
+	goose -dir ./migrations postgres postgres://postgres:pass@localhost:5432/data up
 swag:
 	swag init -g cmd/main.go -o cmd/docs

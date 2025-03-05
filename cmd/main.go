@@ -13,6 +13,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"syscall"
 )
 
 // @title Tasks
@@ -22,11 +23,18 @@ import (
 // @BasePath /api
 
 func main() {
+	// Load environment variables
 	if err := godotenv.Load(); err != nil {
 		log.Println("Can't load env")
 	}
-	postgresURI := os.Getenv("POSTGRES_URI")
 
+	// Get Postgres URI from .env
+	postgresURI := os.Getenv("POSTGRES_URI")
+	if postgresURI == "" {
+		log.Fatal("Error: POSTGRES_URI is not set")
+	}
+
+	// Initialize Fiber app
 	app := fiber.New()
 	app.Use(logger.New())
 	app.Use(
@@ -39,21 +47,29 @@ func main() {
 		),
 	)
 
+	// Serve Swagger docs
 	app.Get("/docs/*", swagger.HandlerDefault)
 
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
-	go func() {
-		_ = <-c
-		fmt.Println("Gracefully shutting down...")
-		_ = app.Shutdown()
-	}()
-	database := db.New(postgresURI)
+	// Connect to the database
+	database, err := db.New(postgresURI)
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
 
+	// Register internal routes
 	internal.Register(app, database)
 
-	err := app.Listen(":8080")
-	if err != nil {
-		fmt.Printf("%v", err.Error())
+	// Graceful shutdown handling
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		<-c
+		fmt.Println("\nGracefully shutting down...")
+		_ = app.Shutdown()
+	}()
+
+	// Start the server
+	if err := app.Listen(":8080"); err != nil {
+		log.Fatalf("Error starting server: %v", err)
 	}
 }

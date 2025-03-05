@@ -21,7 +21,7 @@ type (
 	}
 )
 
-func New(store *Store) Service {
+func New(store StoreI) Service {
 	return &service{repository: store}
 }
 
@@ -41,11 +41,11 @@ func (h *service) Create(c *fiber.Ctx) error {
 	if err := shared.BindBody(c, &input); err != nil {
 		return c.Status(http.StatusUnprocessableEntity).JSON(shared.ErrorRes(err.Error()))
 	}
-	one, err := h.repository.Create(c.Context(), input)
+	task, err := h.repository.Create(c.Context(), input)
 	if err != nil {
 		return c.Status(http.StatusBadRequest).JSON(shared.ErrorRes(err.Error()))
 	}
-	return c.Status(http.StatusCreated).JSON(one)
+	return c.Status(http.StatusCreated).JSON(task)
 }
 
 // Get all tasks
@@ -110,11 +110,11 @@ func (h *service) Update(c *fiber.Ctx) error {
 	if err := shared.BindBody(c, &req); err != nil {
 		return c.Status(http.StatusUnprocessableEntity).JSON(shared.ErrorRes(err.Error()))
 	}
-	updatedEntity, err := h.repository.Update(c.Context(), req, id)
+	task, err := h.repository.Update(c.Context(), req, id)
 	if err != nil {
 		return c.Status(http.StatusBadRequest).JSON(shared.ErrorRes(err.Error()))
 	}
-	return c.Status(http.StatusOK).JSON(updatedEntity)
+	return c.Status(http.StatusOK).JSON(task)
 }
 
 // Delete a task

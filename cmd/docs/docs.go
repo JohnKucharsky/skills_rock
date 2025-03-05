@@ -237,6 +237,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "description": {
+                    "description": "@nullable",
                     "type": "string"
                 },
                 "id": {
@@ -261,7 +262,9 @@ const docTemplate = `{
             ],
             "properties": {
                 "description": {
-                    "type": "string"
+                    "description": "@nullable",
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "status": {
                     "type": "string",
@@ -272,7 +275,8 @@ const docTemplate = `{
                     ]
                 },
                 "title": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 }
             }
         },

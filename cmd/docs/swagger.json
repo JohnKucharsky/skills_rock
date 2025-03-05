@@ -231,6 +231,7 @@
                     "type": "string"
                 },
                 "description": {
+                    "description": "@nullable",
                     "type": "string"
                 },
                 "id": {
@@ -255,7 +256,9 @@
             ],
             "properties": {
                 "description": {
-                    "type": "string"
+                    "description": "@nullable",
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "status": {
                     "type": "string",
@@ -266,7 +269,8 @@
                     ]
                 },
                 "title": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 }
             }
         },
